@@ -8,6 +8,7 @@
     ],
     "allowJs": true,
     "noImplicitAny": true,
+    "noImplicitReturns": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
