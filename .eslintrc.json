@@ -20,5 +20,9 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": ["error"],
+        "semi": [2, "always"],
+        "space-before-function-paren": [2, "never"]
     }
 }
