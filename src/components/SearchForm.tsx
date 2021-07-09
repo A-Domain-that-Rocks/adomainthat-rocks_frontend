@@ -12,7 +12,7 @@ const SearchForm = (props: any) => {
         <Form onSubmit={onSubmitHandler}>
             <Form.Group className="mb-3" controlId="search">
                 <Form.Label>Search</Form.Label>
-                <Form.Control type="text" placeholder="Search" />
+                <Form.Control type="text" placeholder="Search by author" />
                 <Form.Text className="text-muted">
                 </Form.Text>
             </Form.Group>
