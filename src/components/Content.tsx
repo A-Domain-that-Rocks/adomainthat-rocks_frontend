@@ -1,7 +1,11 @@
-import React from 'react';
+/* eslint-disable dot-notation */
+/* eslint-disable no-undef */
+/* eslint-disable space-before-function-paren */
 import { Container, Row, Col } from 'react-bootstrap';
 import SearchForm from './SearchForm';
 import SearchFormAuthorGraph from './SearchFormAuthorGraph';
+import GraphDraw from './Graph';
+import React, { useState } from 'react';
 import dotenv from 'dotenv';
 import {
     ApolloClient
@@ -19,33 +23,50 @@ const myApolloClient = new ApolloClient({
 });
 
 const Content = () => {
+    const [graphData, setGraphData] = useState({ data: { authorGraph: { startNode: {}, vertices: [], edges: [] } } });
+
     const onAuthorSearchHandler = (mySearchValue: String) => {
         // Implement the logic for search
         const MY_QUERY = gql`
             query {
-                author(name: "${mySearchValue}") {
+                authors(name: "${mySearchValue}") {
                     name,
                     orcid,
                     other_names
                 }
             }
         `;
-        myApolloClient.query({ query: MY_QUERY })
-                      .then(result => console.log(result));
+        const result = myApolloClient.query({ query: MY_QUERY });
+        console.log(result);
     };
 
-    const onAuthorGraphSearchHandler = (authorId: String, minDepth: String, maxDepth: String) => {
+    const onAuthorGraphSearchHandler = async (authorId: String, minDepth: String, maxDepth: String) => {
         // Implement the logic for search
         const getGraphDataQuery = gql`
             query {
                 authorGraph(author_id: "${authorId}", minDepth: "${minDepth}", maxDepth: "${maxDepth}") {
-                    graph
+                    startNode {
+                          _id
+                          graph_name
+                    }
+                    vertices {
+                        ... on SlimNode {
+                            _id
+                            graph_name
+                        }
+                    }
+                    edges {
+                        ... on SlimEdge {
+                            _from
+                            _to
+                            label
+                        }
+                    }
                 }
             }
         `;
-
-        myApolloClient.query({ query: getGraphDataQuery })
-                      .then(result => console.log(result));
+        const result = await myApolloClient.query({ query: getGraphDataQuery });
+        setGraphData(result);
     };
 
     return (
@@ -55,7 +76,9 @@ const Content = () => {
                     <SearchForm onSearchHandler={onAuthorSearchHandler}/>
                     <SearchFormAuthorGraph onSearchHandler={onAuthorGraphSearchHandler}/>
                 </Col>
-                <Col xs={12} md={8}>col 2 of row 1</Col>
+                <Col xs={12} md={8}>
+                    {graphData.data.authorGraph.vertices.length > 0 ? <GraphDraw graphApiResponse={graphData}/> : <div>Search to display a graph</div>}
+                </Col>
             </Row>
         </Container>
     );

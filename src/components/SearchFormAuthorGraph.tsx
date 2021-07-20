@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-const SearchForm = (props: any) => {
+const SearchFormAuthorGraph = (props: any) => {
     const [searchValue, setSearchValue] = useState('');
     const [minDepthValue, setMinDepthValue] = useState('');
     const [maxDepthValue, setMaxDepthValue] = useState('');
 
     const onSubmitHandler = (event: any) => {
         event.preventDefault();
-        // TODO Implement search logic
-        props.onSearchHandler(searchValue);
+        props.onSearchHandler(searchValue, minDepthValue, maxDepthValue);
     };
 
     const updateSearchValue = (event: any) => {
@@ -54,4 +53,4 @@ const SearchForm = (props: any) => {
     );
 };
 
-export default SearchForm;
+export default SearchFormAuthorGraph;
