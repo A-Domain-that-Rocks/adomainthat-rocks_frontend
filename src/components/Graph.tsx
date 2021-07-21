@@ -10,8 +10,8 @@ import React, { useEffect, useState } from 'react';
 
 const GraphDraw = (props: any) => {
     console.log('props' + props);
-    const APIresponseNodes = props.graphApiResponse.data.authorGraph.vertices;
-    const APIresponseEdges = props.graphApiResponse.data.authorGraph.edges;
+    const APIresponseNodes = props.graphApiResponse.data.nodeGraph.vertices;
+    const APIresponseEdges = props.graphApiResponse.data.nodeGraph.edges;
 
     const mappedNodes = APIresponseNodes.map((n: { _id: any; graph_name: any; }) => {
         return {
@@ -21,17 +21,6 @@ const GraphDraw = (props: any) => {
         }
     });
 
-    const uniqueNodes = [];
-    const addedKeys = new Set();
-
-    for (let i = 0; i < mappedNodes.length; i++) {
-        if (!addedKeys.has(mappedNodes[i].id)) {
-            console.log(mappedNodes[i]);
-            uniqueNodes.push(mappedNodes[i]);
-            addedKeys.add(mappedNodes[i].id);
-        }
-    }
-
     const mappedEdges = APIresponseEdges.map((e: { _from: any; _to: any; }) => {
         return {
             source: e._from,
@@ -40,13 +29,9 @@ const GraphDraw = (props: any) => {
     });
 
     const mydata = {
-        nodes: [...uniqueNodes],
+        nodes: [...mappedNodes],
         links: [...mappedEdges]
     };
-
-    console.log('APIresponseNodes' + uniqueNodes);
-    console.log('APIresponseEdges' + mappedEdges);
-    console.log('mydata' + mydata);
 
     const myConfig = {
         nodeHighlightBehavior: true,

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-const SearchFormAuthorGraph = (props: any) => {
+const SearchFormNodeGraph = (props: any) => {
     const [searchValue, setSearchValue] = useState('');
     const [minDepthValue, setMinDepthValue] = useState('');
     const [maxDepthValue, setMaxDepthValue] = useState('');
@@ -31,17 +31,17 @@ const SearchFormAuthorGraph = (props: any) => {
             <Form.Group className="mb-3" controlId="search">
                 <Form.Label>Search</Form.Label>
                 <Form.Control type="text"
-                              placeholder="Search author graph"
+                              placeholder="Search for node"
                               value={searchValue}
                               onChange={updateSearchValue} />
                 <Form.Text className="text-muted"></Form.Text>
                 <Form.Control type="text"
-                              placeholder="minimum depth"
+                              placeholder="Set minimum depth"
                               value={minDepthValue}
                               onChange={updateMinDepthValue} />
                 <Form.Text className="text-muted"></Form.Text>
                 <Form.Control type="text"
-                              placeholder="maximum depth"
+                              placeholder="Set maximum depth"
                               value={maxDepthValue}
                               onChange={updateMaxDepthValue} />
                 <Form.Text className="text-muted"></Form.Text>
@@ -53,4 +53,4 @@ const SearchFormAuthorGraph = (props: any) => {
     );
 };
 
-export default SearchFormAuthorGraph;
+export default SearchFormNodeGraph;

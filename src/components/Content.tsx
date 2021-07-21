@@ -2,8 +2,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable space-before-function-paren */
 import { Container, Row, Col } from 'react-bootstrap';
-import SearchForm from './SearchForm';
-import SearchFormAuthorGraph from './SearchFormAuthorGraph';
+import SearchFormNodeGraph from './SearchFormNodeGraph';
 import GraphDraw from './Graph';
 import React, { useState } from 'react';
 import dotenv from 'dotenv';
@@ -23,28 +22,13 @@ const myApolloClient = new ApolloClient({
 });
 
 const Content = () => {
-    const [graphData, setGraphData] = useState({ data: { authorGraph: { startNode: {}, vertices: [], edges: [] } } });
+    const [graphData, setGraphData] = useState({ data: { nodeGraph: { startNode: {}, vertices: [], edges: [] } } });
 
-    const onAuthorSearchHandler = (mySearchValue: String) => {
-        // Implement the logic for search
-        const MY_QUERY = gql`
-            query {
-                authors(name: "${mySearchValue}") {
-                    name,
-                    orcid,
-                    other_names
-                }
-            }
-        `;
-        const result = myApolloClient.query({ query: MY_QUERY });
-        console.log(result);
-    };
-
-    const onAuthorGraphSearchHandler = async (authorId: String, minDepth: String, maxDepth: String) => {
+    const onNodeGraphSearchHandler = async (nodeId: String, minDepth: String, maxDepth: String) => {
         // Implement the logic for search
         const getGraphDataQuery = gql`
             query {
-                authorGraph(author_id: "${authorId}", minDepth: "${minDepth}", maxDepth: "${maxDepth}") {
+                nodeGraph(node_id: "${nodeId}", minDepth: "${minDepth}", maxDepth: "${maxDepth}") {
                     startNode {
                           _id
                           graph_name
@@ -73,11 +57,10 @@ const Content = () => {
         <Container>
             <Row>
                 <Col xs={12} md={4}>
-                    <SearchForm onSearchHandler={onAuthorSearchHandler}/>
-                    <SearchFormAuthorGraph onSearchHandler={onAuthorGraphSearchHandler}/>
+                    <SearchFormNodeGraph onSearchHandler={onNodeGraphSearchHandler}/>
                 </Col>
                 <Col xs={12} md={8}>
-                    {graphData.data.authorGraph.vertices.length > 0 ? <GraphDraw graphApiResponse={graphData}/> : <div>Search to display a graph</div>}
+                    {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <GraphDraw graphApiResponse={graphData}/> : <div>Search to display a graph</div>}
                 </Col>
             </Row>
         </Container>
