@@ -1,15 +1,7 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable react/prop-types */
-/* eslint-disable prefer-const */
-/* eslint-disable camelcase */
-/* eslint-disable semi */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable no-unused-vars */
 import { Graph } from 'react-d3-graph';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 const GraphDraw = (props: any) => {
-    console.log('props' + props);
     const APIresponseNodes = props.graphApiResponse.data.nodeGraph.vertices;
     const APIresponseEdges = props.graphApiResponse.data.nodeGraph.edges;
 

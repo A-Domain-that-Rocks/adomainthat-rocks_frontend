@@ -1,31 +1,14 @@
-/* eslint-disable dot-notation */
-/* eslint-disable no-undef */
-/* eslint-disable space-before-function-paren */
 import { Container, Row, Col } from 'react-bootstrap';
 import SearchFormNodeGraph from './SearchFormNodeGraph';
 import GraphDraw from './Graph';
 import React, { useState } from 'react';
-import dotenv from 'dotenv';
-import {
-    ApolloClient
-    , InMemoryCache
-    //, ApolloProvider
-    //, useQuery
-    , gql
-} from '@apollo/client';
-
-dotenv.config();
-
-const myApolloClient = new ApolloClient({
-    uri: `${process.env.REACT_APP_API_URL}`,
-    cache: new InMemoryCache()
-});
+import { myApolloClient } from '../App';
+import { gql } from '@apollo/client';
 
 const Content = () => {
     const [graphData, setGraphData] = useState({ data: { nodeGraph: { startNode: {}, vertices: [], edges: [] } } });
 
     const onNodeGraphSearchHandler = async (nodeId: String, minDepth: String, maxDepth: String) => {
-        // Implement the logic for search
         const getGraphDataQuery = gql`
             query {
                 nodeGraph(node_id: "${nodeId}", minDepth: "${minDepth}", maxDepth: "${maxDepth}") {
