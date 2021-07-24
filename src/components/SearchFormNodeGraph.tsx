@@ -6,33 +6,26 @@ import '../custom.css';
 
 const SearchFormNodeGraph = (props: any) => {
     const [searchValueNodeName, setSearchValueNodeName] = useState('');
+    const [lastSearchValueNodeName, setLastSearchValueNodeName] = useState('');
     const [searchValueNodeID, setSearchValueNodeID] = useState('');
     const [minDepthValue, setMinDepthValue] = useState('');
     const [maxDepthValue, setMaxDepthValue] = useState('');
-    const [nodes, setNodes] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
-    const [isQueringAPI, setIsQueringAPI] = useState(false);
-    const [lastChangeTimeoutTimerId, setLastChangeTimeoutTimerId] = useState(0);
+    const [isQueryingAPI, setIsQueringAPI] = useState(false);
 
     const onSubmitHandler = (event: any) => {
         event.preventDefault();
-        props.onSearchHandler(searchValueNodeID, minDepthValue, maxDepthValue);
+        if (searchValueNodeID === '' || minDepthValue === '' || maxDepthValue === '') {
+            window.alert(`At least one of the search fields is empty... Please fill in the fields.`);
+        } else {
+            props.onSearchHandler(searchValueNodeID, minDepthValue, maxDepthValue);
+        }
     };
-
-    const filterAlreadyPresentDataForSuggestions = (searchVal: any) => {
-        let matches = []
-        matches = nodes.filter((node: any) => {
-            const regex = new RegExp(`${searchVal}`, "gi");
-            return node.graph_name.match(regex)
-        });
-        console.log("sliced matches", matches.slice(0, 10));
-        setSuggestions(matches.slice(0, 10));
-    }
 
     const queryAPIforSuggestions = async (searchVal: any) => {
         const getSuggestionsQuery = gql`
             query {
-                nodesID(name: "${searchVal}") {
+                customNodeID(name: "${searchVal}") {
                     ... on SuggestedNode {
                         _id
                         graph_name
@@ -43,42 +36,26 @@ const SearchFormNodeGraph = (props: any) => {
             }
         `;
         setIsQueringAPI(true);
+        setSearchValueNodeName(searchVal + ' Loading possible nodes...');
+        setSuggestions([]);
+        console.log('queryAPIforSuggestions', searchVal)
         const result = await myApolloClient.query({ query: getSuggestionsQuery });
-        console.log("result.data.nodesID", result.data.nodesID);
+        console.log('queryAPIforSuggestions', result.data.customNodeID);
+        setSuggestions(result.data.customNodeID);
+        setSearchValueNodeName(searchVal);
         setIsQueringAPI(false);
-        setNodes(result.data.nodesID);
-        console.log("Setting suggestions");
-        console.log("sliced nodesID", result.data.nodesID.slice(0, 10));
-        setSuggestions(result.data.nodesID.slice(0, 10));
     };
-
-    const onDelayedTyping: any = (searchValue: any) => {
-        if (!isQueringAPI) {
-            if (nodes.length > 0) {
-                filterAlreadyPresentDataForSuggestions(searchValue);
-            }
-            else {
-                queryAPIforSuggestions(searchValue);
-            }
-        }
-    };
-
 
     const updateSearchValueNodeName = (event: any) => {
         event.preventDefault();
-        setSearchValueNodeName(event.target.value);
-        clearTimeout (lastChangeTimeoutTimerId);
-        if (event.target.value.length > 4) {
-            if (nodes.length === 0) {
-                const newTimeoutTimerId: any = setTimeout ( function() { onDelayedTyping(event.target.value); }, 300 );
-                setLastChangeTimeoutTimerId(newTimeoutTimerId)
-            }
-            else {
-                filterAlreadyPresentDataForSuggestions(event.target.value);
-            }
-        }
-        else {
-            setNodes([]);
+        console.log('updateSearchValueNodeName', event.target.value)
+        console.log('searchValueNodeName', searchValueNodeName)
+        if (!isQueryingAPI) {
+            setSearchValueNodeName(event.target.value);
+            setLastSearchValueNodeName(event.target.value);
+            queryAPIforSuggestions(event.target.value);
+        } else {
+            setSearchValueNodeName(lastSearchValueNodeName + ' Loading possible nodes...');
         }
     };
 
@@ -86,15 +63,18 @@ const SearchFormNodeGraph = (props: any) => {
         setSearchValueNodeID(id);
         setSearchValueNodeName(name);
         setSuggestions([]);
+        setIsQueringAPI(false);
     };
 
     const updateMinDepthValue = (event: any) => {
         event.preventDefault();
+        console.log('updateMinDepthValue', event.target.value)
         setMinDepthValue(event.target.value);
     };
 
     const updateMaxDepthValue = (event: any) => {
         event.preventDefault();
+        console.log('updateMaxDepthValue', event.target.value)
         setMaxDepthValue(event.target.value);
     };
 
@@ -123,13 +103,13 @@ const SearchFormNodeGraph = (props: any) => {
                               onChange={updateMaxDepthValue} />
                 <Form.Text className="text-muted"></Form.Text>
             </Form.Group>
-            <Button variant="primary" type="submit">
-                Search
-            </Button>
-            {suggestions && suggestions.map((suggestions: any, i) => 
+            {isQueryingAPI ? <div>Loading possible nodes ... </div> : searchValueNodeID === "" ? <div>Select one of the nodes</div> : <Button variant="primary" type="submit">Search</Button>}
+            
+            {suggestions && suggestions.map((this_suggestion: any, i) => 
             <div key={i} className="suggestion justify-content-md-center"
-            onClick={ () => onSuggestionSelectionHandler(suggestions._id, suggestions.graph_name) }
-            >{suggestions.the_type[0].toUpperCase() + suggestions.the_type.slice(1) + ": " + suggestions.graph_name}</div>
+                         onClick={ () => onSuggestionSelectionHandler(this_suggestion._id, this_suggestion.graph_name) }
+            >{this_suggestion.the_type[0].toUpperCase() + this_suggestion.the_type.slice(1) + ": " + this_suggestion.graph_name}
+            </div>
             )}
         </Form>
     );

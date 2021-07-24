@@ -4,7 +4,8 @@ const Footer = () => {
     return (
         <footer className="footer">
             <div className="container">
-                <span className="text-muted">Place sticky footer content here.</span>
+                <hr></hr>
+                <span className="text-muted">This will be the footer</span>
             </div>
         </footer>
     );
