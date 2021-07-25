@@ -25,7 +25,7 @@ const SearchFormNodeGraph = (props: any) => {
     const queryAPIforSuggestions = async (searchVal: any) => {
         const getSuggestionsQuery = gql`
             query {
-                customNodeID(name: "${searchVal}") {
+                nodesID(name: "${searchVal}") {
                     ... on SuggestedNode {
                         _id
                         graph_name
@@ -40,8 +40,8 @@ const SearchFormNodeGraph = (props: any) => {
         setSuggestions([]);
         console.log('queryAPIforSuggestions', searchVal)
         const result = await myApolloClient.query({ query: getSuggestionsQuery });
-        console.log('queryAPIforSuggestions', result.data.customNodeID);
-        setSuggestions(result.data.customNodeID);
+        console.log('queryAPIforSuggestions', result.data.nodesID);
+        setSuggestions(result.data.nodesID);
         setSearchValueNodeName(searchVal);
         setIsQueringAPI(false);
     };
