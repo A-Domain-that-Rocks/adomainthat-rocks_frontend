@@ -1,7 +1,7 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import SearchFormNodeGraph from './SearchFormNodeGraph';
-import GraphDraw from './Graph';
-import React, { useState } from 'react';
+import CytoscapeGraph from './CytoscapeGraph';
+import { useState } from 'react';
 import { myApolloClient } from '../App';
 import { gql } from '@apollo/client';
 
@@ -48,7 +48,7 @@ const Content = () => {
                     <SearchFormNodeGraph onSearchHandler={onNodeGraphSearchHandler}/>
                 </Col>
                 <Col xs={12} md={8}>
-                    {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <GraphDraw graphApiResponse={graphData}/> : isLoadingGraph ? <div>Loading graph ...</div> : <div>Search to display a graph</div> }
+                        {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <CytoscapeGraph graphApiResponse={graphData}/> : isLoadingGraph ? <div>Loading graph ...</div> : <div>Search to display a graph</div> }
                 </Col>
             </Row>
         </Container>

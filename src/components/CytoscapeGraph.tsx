@@ -57,7 +57,7 @@ const CytoscapeGraph = (props: any) => {
                 the_width = 0.75 * base_width;
                 the_height = 0.75 * base_height;
                 the_font_size = 0.6 * base_font_size;
-                the_shape = 'round-octagon';
+                the_shape = 'octagon';
                 the_background_color = 'blue';
                 break;
             case ('school'):
@@ -96,7 +96,7 @@ const CytoscapeGraph = (props: any) => {
                 width: the_width,
                 height: the_height,
                 'background-color': the_background_color,
-                'shape': the_shape,
+                shape: the_shape,
                 'font-size': the_font_size,
                 'border-width': 0 + the_border_width,
                 'border-style': the_border_style
@@ -220,7 +220,8 @@ const CytoscapeGraph = (props: any) => {
                 height: '75vh',
                 //maxWidth: '100%',
                 //left: '-0vw',
-                //backgroundColor: 'rgb(190,190,190)'
+                backgroundColor: 'rgb(240,240,240)',
+                border: 1
             }}
             // style={ { width: '500px', height: '75vh' } }
             layout={layout_options}
