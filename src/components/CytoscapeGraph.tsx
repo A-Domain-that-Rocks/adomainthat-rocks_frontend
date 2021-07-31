@@ -1,4 +1,8 @@
+import Cytoscape from 'cytoscape';
 import CytoscapeComponent from 'react-cytoscapejs';
+// @ts-ignore
+import COSEBilkent from 'cytoscape-cose-bilkent';
+Cytoscape.use(COSEBilkent);
 
 const CytoscapeGraph = (props: any) => {
     const APIresponseStartNode = props.graphApiResponse.data.nodeGraph.startNode;
@@ -212,6 +216,88 @@ const CytoscapeGraph = (props: any) => {
         // Lower temperature threshold (below this point the layout will end)
         minTemp: 1.0
     };
+    
+    let coseBilkentLayoutOptions = {
+        name: 'cose-bilkent',
+      
+        // Called on `layoutready`
+        ready: function(){},
+      
+        // Called on `layoutstop`
+        stop: function(){},
+
+        // Type of layout animation. The option set is {'during', 'end', false}
+        animate: 'end',
+
+        // Duration for animate:end
+        animationDuration: 500,
+      
+        // Extra spacing between components in non-compound graphs
+        componentSpacing: 150,
+      
+        // Divisor to compute edge forces
+        edgeElasticity: 0.45,
+
+        // Whether to fit the network view after when done
+        fit: true,
+      
+        // Gravity force (constant)
+        gravity: 0.25,
+      
+        // Gravity force (constant) for compounds
+        gravityCompound: 1.0,
+
+        // Gravity range (constant)
+        gravityRange: 3.8,
+        
+        // Gravity range (constant) for compounds
+        gravityRangeCompound: 1.5,
+
+        // Ideal (intra-graph) edge length
+        idealEdgeLength: 50,
+
+        // Initial cooling factor for incremental layout
+        initialEnergyOnIncremental: 0.5,
+
+        // Lower temperature threshold (below this point the layout will end)
+        minTemp: 1.0,
+      
+        // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
+        nestingFactor: 0.1,
+
+        // Whether to include labels in node dimensions. Useful for avoiding label overlap
+        nodeDimensionsIncludeLabels: true,
+      
+        // Node repulsion (overlapping) multiplier
+        nodeOverlap: 4,
+
+        // Node repulsion (non overlapping) multiplier
+        nodeRepulsion: 4500,
+
+        // Maximum number of iterations to perform
+        numIter: 2500,
+      
+        // Padding on fit
+        padding: 10,
+
+        // 'draft', 'default' or 'proof" 
+        // - 'draft' fast cooling rate 
+        // - 'default' moderate cooling rate 
+        // - "proof" slow cooling rate
+        quality: 'default',
+      
+        // Randomize the initial positions of the nodes (true) or use existing positions (false)
+        randomize: true,
+        // number of ticks per frame; higher is faster but more jerky
+        refresh: 30,
+        // Whether to tile disconnected nodes
+        tile: true,
+        // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
+        tilingPaddingVertical: 10,
+        // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
+        tilingPaddingHorizontal: 10
+
+    };
 
     return (<CytoscapeComponent
             elements={graphElements}
@@ -220,11 +306,11 @@ const CytoscapeGraph = (props: any) => {
                 height: '75vh',
                 //maxWidth: '100%',
                 //left: '-0vw',
-                backgroundColor: 'rgb(240,240,240)',
+                backgroundColor: '#2F3034',
                 border: 1
             }}
             // style={ { width: '500px', height: '75vh' } }
-            layout={layout_options}
+            layout={coseBilkentLayoutOptions}
         />)
 };
 
