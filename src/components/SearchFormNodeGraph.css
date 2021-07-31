@@ -1,0 +1,39 @@
+.searchForm {
+    background: #2F3034;
+    color: #FFFFFF;
+}
+
+.searchInfo {
+    font-style: italic;
+}
+
+.searchButton {
+}
+
+.form-control {
+    background: rgba(30, 30, 30);
+    color: whitesmoke;
+}
+
+.form-control:focus {
+    background: rgba(40, 40, 40);
+    color: whitesmoke;
+}
+
+.text-muted {
+    color: #FFFFFF;
+}
+
+.suggestionList {
+}
+
+.list-group-item {
+    cursor: pointer;
+    background-color: rgba(46, 47, 51, 0.9);
+    border-bottom: 1px solid whitesmoke;
+}
+
+.list-group-item:hover{
+    background-color: #2F3034;
+    color: whitesmoke;
+}

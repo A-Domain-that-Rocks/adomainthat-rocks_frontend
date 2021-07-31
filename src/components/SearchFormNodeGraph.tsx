@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, ListGroup } from 'react-bootstrap';
 import { myApolloClient } from '../App';
 import { gql } from '@apollo/client';
-import '../custom.css';
+import './SearchFormNodeGraph.css';
 
 const SearchFormNodeGraph = (props: any) => {
     let lastValue = '';
@@ -11,14 +11,14 @@ const SearchFormNodeGraph = (props: any) => {
     const [resultsObtained, setResultsObtained] = useState(new Set());
     const [searchValueNodeName, setSearchValueNodeName] = useState('');
     const [searchValueNodeID, setSearchValueNodeID] = useState('');
-    const [minDepthValue, setMinDepthValue] = useState('');
-    const [maxDepthValue, setMaxDepthValue] = useState('');
+    const [minDepthValue, setMinDepthValue] = useState(1);
+    const [maxDepthValue, setMaxDepthValue] = useState(2);
     const [suggestions, setSuggestions] = useState([]);
     const [lastChangeTimeoutTimerId, setLastChangeTimeoutTimerId] = useState(0);
 
     const onSubmitHandler = (event: any) => {
         event.preventDefault();
-        if (searchValueNodeID === '' || minDepthValue === '' || maxDepthValue === '') {
+        if (searchValueNodeID === '' || minDepthValue === null || maxDepthValue === null) {
             //window.alert(`At least one of the search fields is empty... Please fill in the fields.`);
         } else {
             props.onSearchHandler(searchValueNodeID, minDepthValue, maxDepthValue);
@@ -107,6 +107,7 @@ const SearchFormNodeGraph = (props: any) => {
 
     const updateSearchValueNodeName = (event: any) => {
         event.preventDefault();
+        setSearchValueNodeID('');
         clearTimeout(lastChangeTimeoutTimerId);
         const argVal: string = event.target.value
         setSearchValueNodeName(argVal);
@@ -118,12 +119,12 @@ const SearchFormNodeGraph = (props: any) => {
             }, 750 );
             setLastChangeTimeoutTimerId(newTimeoutTimerId)
         } else if (event.target.value.length > 4 && resultsObtained.has(argVal.toLowerCase())) {
-            const suggest: any = searchValueDict.get(argVal);
+            const suggest: any = searchValueDict.get(argVal.toLowerCase());
             setSuggestions(suggest);
         }
     };
 
-    const onSuggestionSelectionHandler = (id: any, name:any) => {
+    const onSuggestionSelectionHandler = (id: any, name: any) => {
         setSearchValueNodeID(id);
         setSearchValueNodeName(name);
         setSuggestions([]);
@@ -142,38 +143,61 @@ const SearchFormNodeGraph = (props: any) => {
     };
 
     return (
-        <Form onSubmit={onSubmitHandler}>
+        <Form onSubmit={onSubmitHandler} className="searchForm">
             <Form.Group className="mb-3" controlId="search">
-                <Form.Label>Search</Form.Label>
+                <Form.Label className="searchInfo">Enter a name or a title to get a list of possible
+                    nodes</Form.Label>
+
+                <Form.Text className="text-muted">Node name or title</Form.Text>
                 <Form.Control type="text"
-                              placeholder="Search for node"
+                              placeholder="Enter a name or a title"
                               value={searchValueNodeName}
                               onChange={updateSearchValueNodeName}
                               onBlur={() => {
                                   setTimeout(() => {
                                       setSuggestions([])
                                   }, 100);
-                              }} />
-                <Form.Text className="text-muted"></Form.Text>
-                <Form.Control type="text"
+                              }}
+                              onFocus={updateSearchValueNodeName} 
+                              style={ searchValueNodeName === '' || resultsObtained.size === 0 ? {backgroundColor: 'rgb(30, 30, 30)'}: (searchValueNodeID === '' ? {backgroundColor: 'yellow', color: 'rgb(30, 30, 30)'}: {backgroundColor: 'darkgreen'}) }
+                />
+
+                {/*Suggestion section*/}
+                <ListGroup className="suggestionList">
+                    {/*{isQueryingAPI.has(searchValueNodeName) && isQueryingAPI.get(searchValueNodeName) ?*/}
+                    {/*    <div>Loading possible nodes ... </div> : searchValueNodeID === "" ? <div></div> :*/}
+                    {suggestions && suggestions.length > 0 && suggestions.map((this_suggestion: any, i) =>
+                        <ListGroup.Item key={i}>
+                            <div
+                                onClick={() => onSuggestionSelectionHandler(this_suggestion._id, this_suggestion.graph_name)}>
+                                {this_suggestion.the_type[0].toUpperCase() + this_suggestion.the_type.slice(1) + ": " + this_suggestion.graph_name}
+                            </div>
+                        </ListGroup.Item>
+                    )}
+                </ListGroup>
+                
+                <Form.Text className="text-muted">Minimum depth</Form.Text>
+                <Form.Control type="number"
                               placeholder="Set minimum depth, e.g: 1"
                               value={minDepthValue}
-                              onChange={updateMinDepthValue} />
-                <Form.Text className="text-muted"></Form.Text>
-                <Form.Control type="text"
+                              onChange={updateMinDepthValue}
+                              style={minDepthValue == 1 || (minDepthValue > 1 && maxDepthValue >= minDepthValue) ? {backgroundColor: 'darkgreen'}: {backgroundColor: 'yellow', color: 'rgb(30, 30, 30)'} }
+                />
+                {minDepthValue < 1 && minDepthValue <= maxDepthValue ? <Form.Text className="text-warning">Minimum depth has to be greater or equal to 1</Form.Text>: <Form.Text className="text-warning"></Form.Text>}
+                {minDepthValue < 1 && minDepthValue > maxDepthValue ? <Form.Text className="text-warning">Minimum depth has to be greater or equal to maximum depth and it has to be greater or equal to 1</Form.Text>: <Form.Text className="text-warning"></Form.Text>}
+                {minDepthValue > 1 && minDepthValue > maxDepthValue ? <Form.Text className="text-warning">Minimum depth has to be smaller or equal to maximum depth</Form.Text>: <Form.Text className="text-warning"></Form.Text>}
+                <Form.Text className="text-muted">Maximum depth</Form.Text>
+                <Form.Control type="number"
                               placeholder="Set maximum depth, e.g: 2"
                               value={maxDepthValue}
-                              onChange={updateMaxDepthValue} />
-                <Form.Text className="text-muted"></Form.Text>
+                              onChange={updateMaxDepthValue}
+                              style={maxDepthValue >= minDepthValue && maxDepthValue >= 1 ? {backgroundColor: 'darkgreen'}: {backgroundColor: 'yellow', color: 'rgb(30, 30, 30)'} }
+                />
+                {maxDepthValue >= 1 && maxDepthValue < minDepthValue ? <Form.Text className="text-warning">Maximum depth has to be greater or equal to minimum depth</Form.Text>: <Form.Text className="text-warning"></Form.Text>}
+                {maxDepthValue < 1 && maxDepthValue >= minDepthValue ? <Form.Text className="text-warning">Maximum depth has to be greater or equal to 1</Form.Text>: <Form.Text className="text-warning"></Form.Text>}
+                {maxDepthValue < 1 && maxDepthValue < minDepthValue ? <Form.Text className="text-warning">Maximum depth has to be greater or equal to minimum depth and it has to be greater or equal to 1</Form.Text>: <Form.Text className="text-warning"></Form.Text>}
+                <Button className="searchButton" variant="dark" type="submit">Search</Button>
             </Form.Group>
-            {isQueryingAPI.has(searchValueNodeName) && isQueryingAPI.get(searchValueNodeName) ? <div>Loading possible nodes ... </div> : searchValueNodeID === "" ? <div>Enter a name or a title to get a list of possible nodes</div> : <Button variant="primary" type="submit">Search</Button>}
-            
-            {suggestions && suggestions.length > 0 && suggestions.map((this_suggestion: any, i) => 
-            <div key={i} className="suggestion justify-content-md-center"
-                         onClick={ () => onSuggestionSelectionHandler(this_suggestion._id, this_suggestion.graph_name) }
-            >{this_suggestion.the_type[0].toUpperCase() + this_suggestion.the_type.slice(1) + ": " + this_suggestion.graph_name}
-            </div>
-            )}
         </Form>
     );
 };

@@ -1,9 +1,9 @@
-import React from 'react';
+import './Header.css';
 
 const Header = () => {
     return (
-        <header>
-            <h1 className="text-left pl-4">Academic Graph Connections</h1>
+        <header className="header">
+            <h1 className="headerTitle">Academic Graph Connections</h1>
             <hr></hr>
         </header>
     );

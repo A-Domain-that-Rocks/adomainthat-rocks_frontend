@@ -1,12 +1,9 @@
-import React from 'react';
+import './Footer.css';
 
 const Footer = () => {
     return (
         <footer className="footer">
-            <div className="container">
-                <hr></hr>
-                <span className="text-muted">This will be the footer</span>
-            </div>
+            <span className="footerTextBlock">Academic Graph Connections</span>
         </footer>
     );
 };

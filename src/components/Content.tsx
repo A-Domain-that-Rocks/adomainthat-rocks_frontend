@@ -1,20 +1,21 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import SearchFormNodeGraph from './SearchFormNodeGraph';
 import CytoscapeGraph from './CytoscapeGraph';
 import { useState } from 'react';
 import { myApolloClient } from '../App';
 import { gql } from '@apollo/client';
+import './Content.css';
 
 const Content = () => {
     const initialEmptyGraph = { data: { nodeGraph: { startNode: {}, vertices: [], edges: [] } } }
     const [graphData, setGraphData] = useState(initialEmptyGraph);
     const [isLoadingGraph, setIsLoadingGraph] = useState(false);
 
-    const onNodeGraphSearchHandler = async (nodeId: String, minDepth: String, maxDepth: String) => {
+    const onNodeGraphSearchHandler = async (nodeId: String, minDepth: Number, maxDepth: Number) => {
         setGraphData(initialEmptyGraph);
         const getGraphDataQuery = gql`
             query {
-                nodeGraph(node_id: "${nodeId}", minDepth: "${minDepth}", maxDepth: "${maxDepth}") {
+                nodeGraph(node_id: "${nodeId}", minDepth: "${String(minDepth)}", maxDepth: "${String(maxDepth)}") {
                     startNode {
                           _id
                           graph_name
@@ -42,16 +43,16 @@ const Content = () => {
     };
 
     return (
-        <Container>
+        <div className="contentSpace">
             <Row>
-                <Col xs={12} md={4}>
+                <Col xs={12} md={3}>
                     <SearchFormNodeGraph onSearchHandler={onNodeGraphSearchHandler}/>
                 </Col>
-                <Col xs={12} md={8}>
+                <Col xs={12} md={9}>
                         {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <CytoscapeGraph graphApiResponse={graphData}/> : isLoadingGraph ? <div>Loading graph ...</div> : <div>Search to display a graph</div> }
                 </Col>
             </Row>
-        </Container>
+        </div>
     );
 };
 
