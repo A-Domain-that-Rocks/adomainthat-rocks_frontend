@@ -25,6 +25,7 @@
 }
 
 .suggestionList {
+    position: absolute;
 }
 
 .list-group-item {
