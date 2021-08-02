@@ -24,6 +24,7 @@ const Content = () => {
                         ... on SlimNode {
                             _id
                             graph_name
+                            community
                         }
                     }
                     edges {

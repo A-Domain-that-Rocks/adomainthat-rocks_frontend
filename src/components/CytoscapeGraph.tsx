@@ -25,16 +25,16 @@ const CytoscapeGraph = (props: any) => {
     //let base_border_width = 0;
     //let the_border_style = 'solid';
 
-    const mappedNodes = APIresponseNodes.map((n: { _id: any; graph_name: any; }, index: any) => {
+    const mappedNodes = APIresponseNodes.map((n: { _id: any; graph_name: any; community: any }, index: any) => {
         let the_type = n._id.split('/')[0];
         let the_name = n.graph_name.substring(0, 20);
+        let the_community = n.community;
         //let the_width = 0;
         //let the_height = 0;
         let the_shape = '';
         let the_background_color = '';
         //let the_font_size = 0;
         //let the_border_width = 0 + base_border_width;
-        let the_parent = the_type;
 
         switch(the_type) {
             case ('affiliation_institution'):
@@ -102,7 +102,8 @@ const CytoscapeGraph = (props: any) => {
         let constructed_node = {
             data: {
                 id: n._id,
-                'label': the_name
+                'label': the_name,
+                'parent': the_community
             },
             style: {
                 //width: the_width,
