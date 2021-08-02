@@ -2,9 +2,7 @@ import './Footer.css';
 
 const Footer = () => {
     return (
-        <footer className="footer">
-            <span className="footerTextBlock">Academic Graph Connections</span>
-        </footer>
+        <footer className="footer">Project's source code on <a href="https://github.com/A-Domain-that-Rocks">GitHub</a></footer>
     );
 };
 

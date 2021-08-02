@@ -1,4 +1,4 @@
-import { Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import SearchFormNodeGraph from './SearchFormNodeGraph';
 import CytoscapeGraph from './CytoscapeGraph';
 import { useState } from 'react';
@@ -43,8 +43,8 @@ const Content = () => {
     };
 
     return (
-        <div className="contentSpace">
-            <Row>
+        <Container>
+            <Row className="content">
                 <Col xs={12} md={3}>
                     <SearchFormNodeGraph onSearchHandler={onNodeGraphSearchHandler}/>
                 </Col>
@@ -52,7 +52,7 @@ const Content = () => {
                         {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <CytoscapeGraph graphApiResponse={graphData}/> : isLoadingGraph ? <div>Loading graph ...</div> : <div>Search to display a graph</div> }
                 </Col>
             </Row>
-        </div>
+        </Container>
     );
 };
 

@@ -3,8 +3,5 @@
     width:100vw;
     background: rgb(33, 33, 33);
     color: #FFFFFF;
-}
-
-.headerTitle {
-
+    font-size: 3.5rem;
 }
