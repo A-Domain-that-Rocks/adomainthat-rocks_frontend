@@ -6,7 +6,10 @@ import COSEBilkent from 'cytoscape-cose-bilkent';
 import Cola from "cytoscape-cola";
 // @ts-ignore
 import fcose from 'cytoscape-fcose';
+// @ts-ignore
+import cytoscapeExpandCollapse from 'cytoscape-expand-collapse';
 
+//cytoscapeExpandCollapse(Cytoscape);
 Cytoscape.use(COSEBilkent);
 Cytoscape.use(Cola);
 Cytoscape.use( fcose );
@@ -15,74 +18,75 @@ const CytoscapeGraph = (props: any) => {
     const APIresponseStartNode = props.graphApiResponse.data.nodeGraph.startNode;
     const APIresponseNodes = props.graphApiResponse.data.nodeGraph.vertices;
     const APIresponseEdges = props.graphApiResponse.data.nodeGraph.edges;
+    const APIresponseCmmunities = props.graphApiResponse.data.nodeGraph.communities;
 
-    //let base_height = 20;
-    //let base_width = 20;
-    //let base_font_size = 7;
+    let base_height = 20;
+    let base_width = 20;
+    let base_font_size = 7;
     let the_selectable = true;
     let the_locked = false;
     let the_grabbable = true;
-    //let base_border_width = 0;
-    //let the_border_style = 'solid';
+    let base_border_width = 0;
+    let the_border_style = 'solid';
 
     const mappedNodes = APIresponseNodes.map((n: { _id: any; graph_name: any; community: any }, index: any) => {
         let the_type = n._id.split('/')[0];
         let the_name = n.graph_name.substring(0, 20);
         let the_community = n.community;
-        //let the_width = 0;
-        //let the_height = 0;
+        let the_width = 0;
+        let the_height = 0;
         let the_shape = '';
         let the_background_color = '';
-        //let the_font_size = 0;
-        //let the_border_width = 0 + base_border_width;
+        let the_font_size = 0;
+        let the_border_width = 0 + base_border_width;
 
         switch(the_type) {
             case ('affiliation_institution'):
-                //the_width = 0.75 * base_width;
-                //the_height = 0.75 * base_height;
-                //the_font_size = 0.8 * base_font_size;
+                the_width = 0.75 * base_width;
+                the_height = 0.75 * base_height;
+                the_font_size = 0.8 * base_font_size;
                 the_shape = 'round-heptagon';
                 the_background_color = 'yellow';
                 break;
             case ('author'):
-                //the_width = 1 * base_width;
-                //the_height = 1 * base_height;
-                //the_font_size = 1 * base_font_size;
+                the_width = 1 * base_width;
+                the_height = 1 * base_height;
+                the_font_size = 1 * base_font_size;
                 the_shape = 'circle';
                 the_background_color = 'green';
                 break;
             case ('editor'):
-                //the_width = 0.5 * base_width;
-                //the_height = 0.5 * base_height;
-                //the_font_size = 0.8 * base_font_size;
+                the_width = 0.5 * base_width;
+                the_height = 0.5 * base_height;
+                the_font_size = 0.8 * base_font_size;
                 the_shape = 'round-pentagon';
                 the_background_color = 'gray';
                 break;
             case ('journal'):
-                //the_width = 0.5 * base_width;
-                //the_height = 0.5 * base_height;
-                //the_font_size = 0.8 * base_font_size;
+                the_width = 0.5 * base_width;
+                the_height = 0.5 * base_height;
+                the_font_size = 0.8 * base_font_size;
                 the_shape = 'round-rectangle';
                 the_background_color = 'pink';
                 break;
             case ('publication'):
-                //the_width = 0.75 * base_width;
-                //the_height = 0.75 * base_height;
-                //the_font_size = 0.6 * base_font_size;
+                the_width = 0.75 * base_width;
+                the_height = 0.75 * base_height;
+                the_font_size = 0.6 * base_font_size;
                 the_shape = 'octagon';
                 the_background_color = 'blue';
                 break;
             case ('school'):
-                //the_width = 0.67 * base_width;
-                //the_height = 0.67 * base_height;
-                //the_font_size = 0.6 * base_font_size;
+                the_width = 0.67 * base_width;
+                the_height = 0.67 * base_height;
+                the_font_size = 0.6 * base_font_size;
                 the_shape = 'round-hexagon';
                 the_background_color = 'red';
                 break;
             case ('series'):
-                //the_width = 0.5 * base_width;
-                //the_height = 0.5 * base_height;
-                //the_font_size = 0.6 * base_font_size;
+                the_width = 0.5 * base_width;
+                the_height = 0.5 * base_height;
+                the_font_size = 0.6 * base_font_size;
                 the_shape = 'round-diamond';
                 the_background_color = 'purple';
                 break;
@@ -91,12 +95,12 @@ const CytoscapeGraph = (props: any) => {
         }
 
         if (n._id === APIresponseStartNode._id) {
-            //the_width = 2 * base_width;
-            //the_height = 2 * base_height;
-            //the_background_color = 'gray';
-            //the_font_size = 1 * base_font_size;
-            //the_border_width = 0.5 + base_border_width;
-            //the_border_style = 'dotted';
+            the_width = 2 * base_width;
+            the_height = 2 * base_height;
+            the_background_color = 'gray';
+            the_font_size = 1 * base_font_size;
+            the_border_width = 0.5 + base_border_width;
+            the_border_style = 'dotted';
         }
 
         let constructed_node = {
@@ -106,17 +110,18 @@ const CytoscapeGraph = (props: any) => {
                 'parent': the_community
             },
             style: {
-                //width: the_width,
-                //height: the_height,
+                width: the_width,
+                height: the_height,
                 'background-color': the_background_color,
                 shape: the_shape,
-                //'font-size': the_font_size,
-                //'border-width': 0 + the_border_width,
-                //'border-style': the_border_style
+                'font-size': the_font_size,
+                'border-width': 0 + the_border_width,
+                'border-style': the_border_style,
+                'color': "white"
             },
-            //position: { x: Math.floor(Math.random() * 1000),
-            //            y: Math.floor(Math.random() * 1000) },
-            // labelPosition: "bottom"
+            position: { x: Math.floor(Math.random() * 1000),
+                       y: Math.floor(Math.random() * 1000) },
+            labelPosition: "bottom",
             selectable: the_selectable,
             locked: the_locked,
             grabbable: the_grabbable
@@ -139,7 +144,25 @@ const CytoscapeGraph = (props: any) => {
         return constructed_edge;
     });
 
-    const graphElements = [ ...mappedNodes, ...mappedEdges];
+    const mappedCommunities = APIresponseCmmunities.map((c: { number: any; }, index: any) => {
+        let constructed_community = {
+            data: {
+                id: c.number,
+                'label': 'Community ' + c.number
+            },
+            style: {
+                'background-color': 'black',
+                'background-opacity': 0.25,
+                'color': "white"
+            },
+            selectable: the_selectable,
+            locked: the_locked,
+            grabbable: the_grabbable
+        };
+        return constructed_community;
+    });
+
+    const graphElements = [ ...mappedNodes, ...mappedEdges, ...mappedCommunities];
 
     let coseLayoutOptions = {
         name: 'cose',
@@ -347,9 +370,9 @@ const CytoscapeGraph = (props: any) => {
         // Padding around layout
         padding: 30,
         // Whether to include labels in node dimensions. Valid in "proof" quality
-        nodeDimensionsIncludeLabels: false,
+        nodeDimensionsIncludeLabels: true,
         // Whether or not simple nodes (non-compound nodes) are of uniform dimensions
-        uniformNodeDimensions: false,
+        uniformNodeDimensions: true,
         // Whether to pack disconnected components - cytoscape-layout-utilities extension should be registered and initialized
         packComponents: true,
         // Layout step - all, transformed, enforced, cose - for debug purpose only
@@ -412,6 +435,29 @@ const CytoscapeGraph = (props: any) => {
         stop: () => {} // on layoutstop
     };
 
+    let expandCollapseLayoutOptions = {
+        name: 'cose-bilkent',
+        layoutBy: null, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
+        // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
+        fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: true, // whether to animate on drawing changes you can specify a function too
+        animationDuration: 1000, // when animate is true, the duration in milliseconds of the animation
+        ready: function () { }, // callback when expand/collapse initialized
+        undoable: true, // and if undoRedoExtension exists,
+  
+        cueEnabled: true, // Whether cues are enabled
+        expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
+        expandCollapseCueSize: 12, // size of expand-collapse cue
+        expandCollapseCueLineSize: 8, // size of lines used for drawing plus-minus icons
+        expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
+        collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
+        expandCollapseCueSensitivity: 1, // sensitivity of expand-collapse cues
+        //edgeTypeInfo: "edgeType", // the name of the field that has the edge type, retrieved from edge.data(), can be a function, if reading the field returns undefined the collapsed edge type will be "unknown"
+        groupEdgesOfSameTypeOnCollapse : false, // if true, the edges to be collapsed will be grouped according to their types, and the created collapsed edges will have same type as their group. if false the collapased edge will have "unknown" type.
+        allowNestedEdgeCollapse: true, // when you want to collapse a compound edge (edge which contains other edges) and normal edge, should it collapse without expanding the compound first
+        zIndex: 999 // z-index value of the canvas in which cue ımages are drawn
+      };
+
     return (<CytoscapeComponent
             elements={graphElements}
             style={{
@@ -424,7 +470,7 @@ const CytoscapeGraph = (props: any) => {
             }}
             // style={ { width: '500px', height: '75vh' } }
             // @ts-ignore
-            layout={colaSpringyLayoutOptions}
+            layout={coseBilkentLayoutOptions}
         />)
 };
 

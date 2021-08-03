@@ -34,6 +34,11 @@ const Content = () => {
                             label
                         }
                     }
+                    communities {
+                        ... on Community {
+                            number
+                        }
+                    }
                 }
             }
         `;
