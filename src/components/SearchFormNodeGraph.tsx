@@ -28,11 +28,12 @@ const SearchFormNodeGraph = (props: any) => {
             setFormInputs({input: {nodeId: "", min: 1, max: 2}, errors: {nodeId: '', min: '', max: ''}});
             props.onSearchHandler(searchValueNodeID, minDepthValue, maxDepthValue);
         }
+        // props.onSearchHandler("author/40211985", "1", "2"); // static author id just to do some fast tests
     };
 
     useEffect( () => {
             if (isValidatedAtLeastOnce) { validate(); }
-        }, [searchValueNodeID, minDepthValue, maxDepthValue]
+        }, [searchValueNodeID, minDepthValue, maxDepthValue, searchValueNodeName]
     );
 
     const validate = () => {
@@ -45,9 +46,14 @@ const SearchFormNodeGraph = (props: any) => {
         let isValid = true;
 
         //Name is required - check if it is empty
-        if (!input["nodeId"] || input["nodeId"] === '') {
+        if ((!input["nodeId"] || input["nodeId"] === '') && searchValueNodeName !== '') {
             isValid = false;
             errors["nodeId"] = "Choose a node name from the list";
+        }
+
+        if ((!input["nodeId"] || input["nodeId"]) && searchValueNodeName === '') {
+            isValid = false;
+            errors["nodeId"] = "Enter a name or a title to get a list of possible nodes"
         }
 
         // Minimum depth validation checks
@@ -231,11 +237,8 @@ const SearchFormNodeGraph = (props: any) => {
 
     return (
         <Form onSubmit={onSubmitHandler} className="searchForm">
-            <Form.Group className="mb-3" controlId="search">
-                <Form.Label className="searchInfo">Enter a name or a title to get a list of possible
-                    nodes</Form.Label>
-
-                <Form.Text className="text-muted">Node name or title</Form.Text>
+            <Form.Group className="autocomplete-container" controlId="search">
+                <Form.Label className="text-muted">Node name or title</Form.Label>
                 <Form.Control type="text"
                               name="nodeId"
                               placeholder="Enter a name or a title"
@@ -267,7 +270,7 @@ const SearchFormNodeGraph = (props: any) => {
             </Form.Group>
 
             <Form.Group>
-                <Form.Text className="text-muted">Minimum depth</Form.Text>
+                <Form.Label className="text-muted">Minimum depth</Form.Label>
                 <Form.Control type="number"
                               name="min"
                               placeholder="Set minimum depth, e.g: 1"
@@ -282,7 +285,7 @@ const SearchFormNodeGraph = (props: any) => {
             </Form.Group>
 
             <Form.Group>
-                <Form.Text className="text-muted">Maximum depth</Form.Text>
+                <Form.Label className="text-muted">Maximum depth</Form.Label>
                 <Form.Control type="number"
                               name="max"
                               placeholder="Set maximum depth, e.g: 2"
@@ -294,6 +297,8 @@ const SearchFormNodeGraph = (props: any) => {
                 <Form.Control.Feedback type="invalid">
                     {formInputs.errors.max}
                 </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
                 <Button className="searchButton" variant="dark" type="submit">Search</Button>
             </Form.Group>
         </Form>

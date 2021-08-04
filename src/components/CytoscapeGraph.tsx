@@ -153,7 +153,8 @@ const CytoscapeGraph = (props: any) => {
             style: {
                 'background-color': 'black',
                 'background-opacity': 0.25,
-                'color': "white"
+                'color': "white",
+                shape: 'round-rectangle'
             },
             selectable: the_selectable,
             locked: the_locked,
