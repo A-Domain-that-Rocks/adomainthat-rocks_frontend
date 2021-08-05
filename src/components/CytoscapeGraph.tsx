@@ -11,7 +11,7 @@ import fcose from 'cytoscape-fcose';
 import cytoscapeExpandCollapse from 'cytoscape-expand-collapse';
 // @ts-ignore
 import popper from 'cytoscape-popper';
-
+// @ts-ignore
 import tippy from 'tippy.js';
 
 import 'tippy.js/dist/tippy.css'; // optional for styling

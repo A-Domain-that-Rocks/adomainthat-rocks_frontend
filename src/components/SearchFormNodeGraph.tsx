@@ -114,7 +114,7 @@ const SearchFormNodeGraph = (props: any) => {
     };
 
     const queryAPIforSuggestions = async (searchVal: string) => {
-        // const lowerSearchVal = searchVal.toLowerCase()
+        // const lowerSearchVal = searchVal
         //
         // isQueryingAPI.set(lowerSearchVal, true);
         // setIsQueryingAPI(isQueryingAPI);
@@ -145,7 +145,7 @@ const SearchFormNodeGraph = (props: any) => {
         // setIsQueryingAPI(isQueryingAPI);
         // filterObtainedResults();
 
-        const lowerSearchVal = searchVal.toLowerCase()
+        const lowerSearchVal = searchVal
 
         isQueryingAPI.set(lowerSearchVal, true);
         setIsQueryingAPI(isQueryingAPI);
@@ -167,7 +167,7 @@ const SearchFormNodeGraph = (props: any) => {
         let flag_done = false;
         for (let i = 0; i < lastValue.length; i++) {
             for (let item of resultsObtained) {
-                if (item === lastValue.substring(0, lastValue.length - i).toLowerCase()) {
+                if (item === lastValue.substring(0, lastValue.length - i)) {
                     const suggest: any = searchValueDict.get(item);
                     setSuggestions(suggest);
                     flag_done = true;
@@ -187,13 +187,13 @@ const SearchFormNodeGraph = (props: any) => {
         setSearchValueNodeName(argVal);
         lastValue = argVal;
 
-        if (event.target.value.length > 4 && !resultsObtained.has(argVal.toLowerCase()) && !isQueryingAPI.has(argVal.toLowerCase())) {
+        if (event.target.value.length > 4 && !resultsObtained.has(argVal) && !isQueryingAPI.has(argVal)) {
             const newTimeoutTimerId: any = setTimeout(function() {
                 queryAPIforSuggestions(argVal);
             }, 750);
             setLastChangeTimeoutTimerId(newTimeoutTimerId)
-        } else if (event.target.value.length > 4 && resultsObtained.has(argVal.toLowerCase())) {
-            const suggest: any = searchValueDict.get(argVal.toLowerCase());
+        } else if (event.target.value.length > 4 && resultsObtained.has(argVal)) {
+            const suggest: any = searchValueDict.get(argVal);
             setSuggestions(suggest);
         }
     };
