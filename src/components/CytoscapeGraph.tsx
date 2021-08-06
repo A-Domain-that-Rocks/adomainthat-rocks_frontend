@@ -494,21 +494,15 @@ const CytoscapeGraph = (props: any) => {
     };
 
     function makePopper(ele: any) {
-// https://atomiks.github.io/tippyjs/v6/constructor/#target-types
         let ref = ele.popperRef(); // used only for positioning
         let dummyDomEle = document.createElement('div');
-// @ts-ignore
+        // @ts-ignore
         ele.tippy = new tippy(dummyDomEle, { // tippy props:
             getReferenceClientRect: ref.getBoundingClientRect, // https://atomiks.github.io/tippyjs/v6/all-props/#getreferenceclientrect
             trigger: 'manual', // mandatory, we cause the tippy to show programmatically.
-
-            // your own custom props
-            // content prop can be used when the target is a single element https://atomiks.github.io/tippyjs/v6/constructor/#prop
             content: () => {
                 let content = document.createElement('div');
-
                 content.innerHTML = ele.id();
-
                 return content;
             }
         });
@@ -528,7 +522,6 @@ const CytoscapeGraph = (props: any) => {
         cy={(cy) => {
             cy.ready(function () {
                 cy.elements().forEach(function (ele: any) {
-                    console.log('ele', ele)
                     makePopper(ele);
                 });
             });
@@ -538,7 +531,6 @@ const CytoscapeGraph = (props: any) => {
             cy.elements().unbind('mouseout');
             cy.elements().bind('mouseout', (event: any) => event.target.tippy.hide());
         }}
-
         // style={ { width: '500px', height: '75vh' } }
         // @ts-ignore
         layout={coseBilkentLayoutOptions}

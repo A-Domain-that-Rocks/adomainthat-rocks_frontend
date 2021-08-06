@@ -10,30 +10,23 @@ const SearchFormNodeGraph = (props: any) => {
     const [isQueryingAPI, setIsQueryingAPI] = useState(new Map<string, boolean>());
     const [resultsObtained, setResultsObtained] = useState(new Set());
     const [searchValueNodeName, setSearchValueNodeName] = useState('');
-    const [searchValueNodeID, setSearchValueNodeID] = useState(''); // to do refactor with formInputs.input.nodeId
-    const [minDepthValue, setMinDepthValue] = useState(1); // to do refactor with formInputs.input.min
-    const [maxDepthValue, setMaxDepthValue] = useState(2); // to do refactor with formInputs.input.max
     const [suggestions, setSuggestions] = useState([]);
     const [lastChangeTimeoutTimerId, setLastChangeTimeoutTimerId] = useState(0);
     const [formInputs, setFormInputs] = useState({
-        input: {nodeId: '', min: 1, max: 2}, // to do refactor with searchValueNodeID, minDepthValue and maxDepthValue
-        errors: {nodeId: '', min: '', max: ''}
+        input: {nodeId: '', min: 1, max: 2},
+        errors: {nodeId: '', min: '', max: ''},
+        isFormValid: false,
+        isValidatedAtLeastOnce: false
     });
-    const [isValidatedAtLeastOnce, setIsValidatedAtLeastOnce] = useState(false);
 
     const onSubmitHandler = (event: any) => {
         event.preventDefault();
-        setIsValidatedAtLeastOnce(true)
-        if (validate()) {
-            setFormInputs({input: {nodeId: "", min: 1, max: 2}, errors: {nodeId: '', min: '', max: ''}});
-            props.onSearchHandler(searchValueNodeID, minDepthValue, maxDepthValue);
-        }
-        // props.onSearchHandler("author/40211985", "1", "2"); // static author id just to do some fast tests
+        if (validate()) { props.onSearchHandler(formInputs.input.nodeId, formInputs.input.min, formInputs.input.max); }
     };
 
     useEffect( () => {
-            if (isValidatedAtLeastOnce) { validate(); }
-        }, [searchValueNodeID, minDepthValue, maxDepthValue, searchValueNodeName]
+            if (formInputs.isValidatedAtLeastOnce) { validate(); }
+        }, [formInputs.input.nodeId, formInputs.input.min, formInputs.input.max, searchValueNodeName]
     );
 
     const validate = () => {
@@ -94,7 +87,9 @@ const SearchFormNodeGraph = (props: any) => {
 
         setFormInputs((prevState) => ({
             ...prevState,
-            errors
+            errors: errors,
+            isFormValid: isValid,
+            isValidatedAtLeastOnce: true
         }));
         return isValid;
     };
@@ -179,27 +174,43 @@ const SearchFormNodeGraph = (props: any) => {
         if (!flag_done) setSuggestions([]);
     }
 
+    const focusReturnedHandler = (event: any) => {
+        event.preventDefault();
+        clearTimeout(lastChangeTimeoutTimerId);
+        const argVal: string = event.target.value
+        lastValue = argVal;
+        suggestOrQuery(argVal);
+    }
+
     const updateSearchValueNodeName = (event: any) => {
         event.preventDefault();
-        setSearchValueNodeID('');
+        setFormInputs((prevState) => ({
+            ...prevState,
+            input: {
+                ...prevState.input,
+                nodeId: ''
+            }
+        }));
         clearTimeout(lastChangeTimeoutTimerId);
         const argVal: string = event.target.value
         setSearchValueNodeName(argVal);
         lastValue = argVal;
-
-        if (event.target.value.length > 4 && !resultsObtained.has(argVal) && !isQueryingAPI.has(argVal)) {
-            const newTimeoutTimerId: any = setTimeout(function() {
-                queryAPIforSuggestions(argVal);
-            }, 750);
-            setLastChangeTimeoutTimerId(newTimeoutTimerId)
-        } else if (event.target.value.length > 4 && resultsObtained.has(argVal)) {
-            const suggest: any = searchValueDict.get(argVal);
-            setSuggestions(suggest);
-        }
+        suggestOrQuery(argVal);
     };
 
+    const suggestOrQuery = (argEventVal: string) => {
+        if (argEventVal.length > 4 && !resultsObtained.has(argEventVal) && !isQueryingAPI.has(argEventVal)) {
+            const newTimeoutTimerId: any = setTimeout(function() {
+                queryAPIforSuggestions(argEventVal);
+            }, 750);
+            setLastChangeTimeoutTimerId(newTimeoutTimerId)
+        } else if (argEventVal.length > 4 && resultsObtained.has(argEventVal)) {
+            const suggest: any = searchValueDict.get(argEventVal);
+            setSuggestions(suggest);
+        }
+    }
+
     const onSuggestionSelectionHandler = (suggestion: any) => {
-        setSearchValueNodeID(suggestion._id);
         setFormInputs((prevState) => ({
             ...prevState,
             input: {
@@ -219,7 +230,6 @@ const SearchFormNodeGraph = (props: any) => {
                 [event.target.name]: parseInt(event.target.value) // to do refactor to outer function call
             },
         }));
-        setMinDepthValue(event.target.value);
     };
 
     const updateMaxDepthValue = (event: any) => {
@@ -231,7 +241,6 @@ const SearchFormNodeGraph = (props: any) => {
                 [event.target.name]: parseInt(event.target.value) // to do refactor to outer function call
             },
         }));
-        setMaxDepthValue(event.target.value);
     };
 
     return (
@@ -241,7 +250,7 @@ const SearchFormNodeGraph = (props: any) => {
                         onBlur={() => {
                             setTimeout(() => {
                                 setSuggestions([])
-                            }, 100);
+                            }, 200);
                         }}>
                 <Form.Label className="text-muted">Node name or title</Form.Label>
                 <Form.Control type="text"
@@ -250,8 +259,8 @@ const SearchFormNodeGraph = (props: any) => {
                               value={searchValueNodeName}
                               onChange={updateSearchValueNodeName}
                               isInvalid={formInputs.errors.nodeId !== ''}
-                              isValid={isValidatedAtLeastOnce && formInputs.input.nodeId !== ''}
-                              onFocus={updateSearchValueNodeName}
+                              isValid={formInputs.isValidatedAtLeastOnce && formInputs.input.nodeId !== ''}
+                              onFocus={focusReturnedHandler}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formInputs.errors.nodeId}
@@ -274,9 +283,9 @@ const SearchFormNodeGraph = (props: any) => {
                 <Form.Control type="number"
                               name="min"
                               placeholder="Set minimum depth, e.g: 1"
-                              value={minDepthValue}
+                              value={formInputs.input.min}
                               isInvalid={formInputs.errors.min !== ''}
-                              isValid={isValidatedAtLeastOnce && formInputs.errors.min === ''}
+                              isValid={formInputs.isValidatedAtLeastOnce && formInputs.errors.min === ''}
                               onChange={updateMinDepthValue}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -289,10 +298,10 @@ const SearchFormNodeGraph = (props: any) => {
                 <Form.Control type="number"
                               name="max"
                               placeholder="Set maximum depth, e.g: 2"
-                              value={maxDepthValue}
+                              value={formInputs.input.max}
                               onChange={updateMaxDepthValue}
                               isInvalid={formInputs.errors.max !== ''}
-                              isValid={isValidatedAtLeastOnce && formInputs.errors.max === ''}
+                              isValid={formInputs.isValidatedAtLeastOnce && formInputs.errors.max === ''}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formInputs.errors.max}
@@ -302,9 +311,7 @@ const SearchFormNodeGraph = (props: any) => {
             <Button className="searchButton"
                     variant="dark"
                     type="submit"
-                    disabled={isValidatedAtLeastOnce && (
-                        // !isFormValid ||
-                        props.isLoadingGraph)}>
+                    disabled={formInputs.isValidatedAtLeastOnce && (!formInputs.isFormValid || props.isLoadingGraph)}>
                     {props.isLoadingGraph && <Spinner
                         as="span"
                         animation="border"
