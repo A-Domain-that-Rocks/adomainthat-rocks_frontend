@@ -52,10 +52,11 @@ const Content = () => {
         <Container>
             <Row className="content">
                 <Col xs={12} md={3}>
-                    <SearchFormNodeGraph onSearchHandler={onNodeGraphSearchHandler}/>
+                    <SearchFormNodeGraph onSearchHandler={onNodeGraphSearchHandler} isLoadingGraph={isLoadingGraph}/>
                 </Col>
                 <Col xs={12} md={9}>
-                        {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <CytoscapeGraph graphApiResponse={graphData}/> : isLoadingGraph ? <div>Loading graph ...</div> : <div>Search to display a graph</div> }
+                    {/*TODO Use isLoadingGraph variable inside CytoscapeGraph component through props in order to display a spinner while the request is in progres*/}
+                    {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <CytoscapeGraph graphApiResponse={graphData}/> : isLoadingGraph ? <div>Loading graph ...</div> : <div>Search to display a graph</div> }
                 </Col>
             </Row>
         </Container>

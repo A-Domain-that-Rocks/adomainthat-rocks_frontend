@@ -18,6 +18,12 @@
     text-transform: uppercase;
 }
 
+.searchButton.disabled, .searchButton:disabled {
+    background-color: #303941;
+    border-color: rgb(40, 167, 69);
+    color: rgb(40, 167, 69);
+}
+
 .searchButton:hover {
     background-color: rgb(40, 167, 69);
     border-color: rgb(40, 167, 69);
@@ -51,6 +57,7 @@
     background-color: rgba(46, 47, 51, 1);
     border-bottom: 1px solid #545b62;
     font-size: 1.25rem;
+    position: relative;
 }
 
 .list-group-item:hover{

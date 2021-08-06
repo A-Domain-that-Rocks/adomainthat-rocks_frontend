@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form, Button, ListGroup } from 'react-bootstrap';
+import { Form, Button, ListGroup, Spinner } from 'react-bootstrap';
 import { myApolloClient } from '../App';
 import { gql } from '@apollo/client';
 import './SearchFormNodeGraph.css';
@@ -208,7 +208,6 @@ const SearchFormNodeGraph = (props: any) => {
             }
         }));
         setSearchValueNodeName(suggestion.graph_name);
-        setSuggestions([]);
     };
 
     const updateMinDepthValue = (event: any) => {
@@ -237,7 +236,13 @@ const SearchFormNodeGraph = (props: any) => {
 
     return (
         <Form onSubmit={onSubmitHandler} className="searchForm">
-            <Form.Group className="autocomplete-container" controlId="search">
+            <Form.Group className="autocomplete-container"
+                        controlId="search"
+                        onBlur={() => {
+                            setTimeout(() => {
+                                setSuggestions([])
+                            }, 100);
+                        }}>
                 <Form.Label className="text-muted">Node name or title</Form.Label>
                 <Form.Control type="text"
                               name="nodeId"
@@ -246,11 +251,6 @@ const SearchFormNodeGraph = (props: any) => {
                               onChange={updateSearchValueNodeName}
                               isInvalid={formInputs.errors.nodeId !== ''}
                               isValid={isValidatedAtLeastOnce && formInputs.input.nodeId !== ''}
-                              onBlur={() => {
-                                  setTimeout(() => {
-                                      setSuggestions([])
-                                  }, 100);
-                              }}
                               onFocus={updateSearchValueNodeName}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -299,7 +299,20 @@ const SearchFormNodeGraph = (props: any) => {
                 </Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-                <Button className="searchButton" variant="dark" type="submit">Search</Button>
+            <Button className="searchButton"
+                    variant="dark"
+                    type="submit"
+                    disabled={isValidatedAtLeastOnce && (
+                        // !isFormValid ||
+                        props.isLoadingGraph)}>
+                    {props.isLoadingGraph && <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                    />}
+                    <span> Search</span></Button>
             </Form.Group>
         </Form>
     );
