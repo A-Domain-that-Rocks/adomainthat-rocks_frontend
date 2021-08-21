@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
+import React, {Fragment} from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/Header';
 import Content from './components/Content';
 import Footer from './components/Footer';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import {ApolloClient, InMemoryCache} from '@apollo/client';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -26,4 +26,4 @@ function App() {
     );
 };
 
-export { App, myApolloClient };
+export {App, myApolloClient};

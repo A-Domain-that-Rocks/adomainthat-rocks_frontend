@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
-import { Form, Button, ListGroup, Spinner } from 'react-bootstrap';
-import { myApolloClient } from '../App';
-import { gql } from '@apollo/client';
+import {useEffect, useState} from 'react';
+import {Form, Button, ListGroup, Spinner} from 'react-bootstrap';
+import {myApolloClient} from '../App';
+import {gql} from '@apollo/client';
 import './SearchFormNodeGraph.css';
 
 const SearchFormNodeGraph = (props: any) => {
     let lastValue = '';
+    const [suggestionLoading, setSuggestionLoading] = useState(false)
     const [searchValueDict, setSearchValueDict] = useState(new Map<string, []>());
     const [isQueryingAPI, setIsQueryingAPI] = useState(new Map<string, boolean>());
     const [resultsObtained, setResultsObtained] = useState(new Set());
@@ -21,11 +22,15 @@ const SearchFormNodeGraph = (props: any) => {
 
     const onSubmitHandler = (event: any) => {
         event.preventDefault();
-        if (validate()) { props.onSearchHandler(formInputs.input.nodeId, formInputs.input.min, formInputs.input.max); }
+        if (validate()) {
+            props.onSearchHandler(formInputs.input.nodeId, formInputs.input.min, formInputs.input.max);
+        }
     };
 
-    useEffect( () => {
-            if (formInputs.isValidatedAtLeastOnce) { validate(); }
+    useEffect(() => {
+            if (formInputs.isValidatedAtLeastOnce) {
+                validate();
+            }
         }, [formInputs.input.nodeId, formInputs.input.min, formInputs.input.max, searchValueNodeName]
     );
 
@@ -144,9 +149,9 @@ const SearchFormNodeGraph = (props: any) => {
 
         isQueryingAPI.set(lowerSearchVal, true);
         setIsQueryingAPI(isQueryingAPI);
-
+        setSuggestionLoading(true)
         const result2: any = await myApolloClient.query({query: searchQueryBuilder(searchVal, "2")});
-
+        setSuggestionLoading(false)
         searchValueDict.set(lowerSearchVal, result2.data.nodesID2);
         setSearchValueDict(searchValueDict);
 
@@ -200,7 +205,7 @@ const SearchFormNodeGraph = (props: any) => {
 
     const suggestOrQuery = (argEventVal: string) => {
         if (argEventVal.length > 4 && !resultsObtained.has(argEventVal) && !isQueryingAPI.has(argEventVal)) {
-            const newTimeoutTimerId: any = setTimeout(function() {
+            const newTimeoutTimerId: any = setTimeout(function () {
                 queryAPIforSuggestions(argEventVal);
             }, 750);
             setLastChangeTimeoutTimerId(newTimeoutTimerId)
@@ -253,15 +258,26 @@ const SearchFormNodeGraph = (props: any) => {
                             }, 200);
                         }}>
                 <Form.Label className="text-muted">Node name or title</Form.Label>
-                <Form.Control type="text"
-                              name="nodeId"
-                              placeholder="Enter a name or a title"
-                              value={searchValueNodeName}
-                              onChange={updateSearchValueNodeName}
-                              isInvalid={formInputs.errors.nodeId !== ''}
-                              isValid={formInputs.isValidatedAtLeastOnce && formInputs.input.nodeId !== ''}
-                              onFocus={focusReturnedHandler}
-                />
+                <div className="autocomplete-input">
+                    <Form.Control type="text"
+                                  name="nodeId"
+                                  placeholder="Enter a name or a title"
+                                  value={searchValueNodeName}
+                                  onChange={updateSearchValueNodeName}
+                                  isInvalid={formInputs.errors.nodeId !== ''}
+                                  isValid={formInputs.isValidatedAtLeastOnce && formInputs.input.nodeId !== ''}
+                                  onFocus={focusReturnedHandler}
+                    />
+                    {suggestionLoading && <Spinner
+                        className="suggestion-spinner"
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"/>}
+
+                </div>
+
                 <Form.Control.Feedback type="invalid">
                     {formInputs.errors.nodeId}
                 </Form.Control.Feedback>
@@ -308,17 +324,17 @@ const SearchFormNodeGraph = (props: any) => {
                 </Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-            <Button className="searchButton"
-                    variant="dark"
-                    type="submit"
-                    disabled={formInputs.isValidatedAtLeastOnce && (!formInputs.isFormValid || props.isLoadingGraph)}>
-                    {props.isLoadingGraph && <Spinner
+                <Button className="searchButton"
+                        variant="dark"
+                        type="submit"
+                        disabled={formInputs.isValidatedAtLeastOnce && (!formInputs.isFormValid || props.isLoadingGraph)}>
+                        {props.isLoadingGraph && <Spinner
                         as="span"
                         animation="border"
                         size="sm"
                         role="status"
-                        aria-hidden="true"
-                    />}
+                        aria-hidden="true"/>
+                    }
                     <span> Search</span></Button>
             </Form.Group>
         </Form>

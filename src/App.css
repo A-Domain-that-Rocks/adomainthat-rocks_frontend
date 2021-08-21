@@ -1,8 +1,4 @@
 .App {
   /** text-align: center;*/
-  background: rgb(27, 27, 27);
-}
-
-html {
-  font-size: min(1.5vw, 1.5vh);
+  background: rgba(46, 47, 51, 0.9);
 }

@@ -3,5 +3,19 @@
     height: 5vh;
     background: rgb(33, 33, 33);
     color: #FFFFFF;
-    font-size: 1.5rem;
+    display: table;
+}
+
+.footerContent {
+    font-size: 1.2rem;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.footerContent a {
+    color: #28a745;
 }

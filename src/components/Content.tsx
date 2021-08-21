@@ -1,4 +1,4 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import SearchFormNodeGraph from './SearchFormNodeGraph';
 import CytoscapeGraph from './CytoscapeGraph';
 import { useState } from 'react';
@@ -55,8 +55,19 @@ const Content = () => {
                     <SearchFormNodeGraph onSearchHandler={onNodeGraphSearchHandler} isLoadingGraph={isLoadingGraph}/>
                 </Col>
                 <Col xs={12} md={9}>
-                    {/*TODO Use isLoadingGraph variable inside CytoscapeGraph component through props in order to display a spinner while the request is in progres*/}
-                    {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <CytoscapeGraph graphApiResponse={graphData}/> : isLoadingGraph ? <div>Loading graph ...</div> : <div>Search to display a graph</div> }
+                    <div className="graphContainer">
+                        {/*TODO Use isLoadingGraph variable inside CytoscapeGraph component through props in order to display a spinner while the request is in progres*/}
+                        {graphData && graphData.data && graphData.data.nodeGraph && graphData.data.nodeGraph.vertices && graphData.data.nodeGraph.vertices.length > 0 ? <CytoscapeGraph graphApiResponse={graphData}/> : isLoadingGraph ?
+                            <div className="infoText">Loading graph ...
+                            <br/>
+                            <Spinner
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                        /></div> : <div className="infoText">Search to display a graph</div> }
+                    </div>
                 </Col>
             </Row>
         </Container>

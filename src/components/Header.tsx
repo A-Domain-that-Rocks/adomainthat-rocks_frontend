@@ -2,7 +2,9 @@ import './Header.css';
 
 const Header = () => {
     return (
-        <header className="header">Academic Graph Connections</header>
+        <header className="header">
+            <div className="headerTitle">Academic Graph Connections</div>
+        </header>
     );
 };
 
